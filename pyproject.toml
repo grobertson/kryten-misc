@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "echo-bot"
+version = "0.1.0"
+description = "CyTube echo bot using kryten-py"
+authors = ["Bot Developer"]
+readme = "README.md"
+packages = [{include = "echo_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+kryten-py = {path = "../kryten-py", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

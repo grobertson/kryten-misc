@@ -1,0 +1,15 @@
+{
+  "nats": {
+    "servers": ["nats://localhost:4222"],
+    "user": "${NATS_USER}",
+    "password": "${NATS_PASSWORD}"
+  },
+  "channels": [
+    {
+      "domain": "cytu.be",
+      "channel": "420grindhouse"
+    }
+  ],
+  "retry_attempts": 3,
+  "handler_timeout": 30.0
+}

@@ -1,0 +1,59 @@
+# systemd service file for Echo Bot
+# Installation:
+#   1. Copy this file to /etc/systemd/system/echo-bot.service
+#   2. Update User, Group, and WorkingDirectory paths
+#   3. Update ExecStart path to your installation directory
+#   4. Run: sudo systemctl daemon-reload
+#   5. Run: sudo systemctl enable echo-bot
+#   6. Run: sudo systemctl start echo-bot
+#
+# Usage:
+#   Start:   sudo systemctl start echo-bot
+#   Stop:    sudo systemctl stop echo-bot
+#   Restart: sudo systemctl restart echo-bot
+#   Status:  sudo systemctl status echo-bot
+#   Logs:    sudo journalctl -u echo-bot -f
+
+[Unit]
+Description=CyTube Echo Bot
+After=network.target nats.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bot
+Group=bot
+WorkingDirectory=/opt/kryten-misc
+
+# Environment variables (optional)
+Environment="NATS_USER=bot_user"
+Environment="NATS_PASSWORD=bot_password"
+
+# Main process
+ExecStart=/opt/kryten-misc/.venv/bin/python -m echo_bot.main --config /opt/kryten-misc/config.json
+
+# Restart policy
+Restart=on-failure
+RestartSec=10
+StartLimitBurst=5
+StartLimitIntervalSec=300
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=echo-bot
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/kryten-misc
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target
