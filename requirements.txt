@@ -1,0 +1,9 @@
+# Kryten Misc (Echo Bot) Dependencies
+# Simple echo bot demonstrating kryten-py usage
+
+# Core dependency - kryten-py library for CyTube/NATS integration
+kryten-py>=0.4.0
+
+# kryten-py brings these transitive dependencies:
+# - nats-py>=2.9.0 (NATS messaging)
+# - pydantic>=2.0.0 (data validation)
