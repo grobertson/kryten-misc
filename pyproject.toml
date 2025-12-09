@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "echo_bot"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 kryten-py = {path = "../kryten-py", develop = true}
 
 [tool.poetry.group.dev.dependencies]
