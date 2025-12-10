@@ -92,6 +92,9 @@ if command -v nc > /dev/null 2>&1; then
     fi
 fi
 
+# Clear PYTHONPATH to avoid conflicts with development versions
+export PYTHONPATH=""
+
 # Start the bot
 log_info "Starting Echo Bot..."
 if [ -n "$CONFIG_ARG" ]; then
