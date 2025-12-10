@@ -29,8 +29,9 @@ WorkingDirectory=/opt/kryten-misc
 Environment="NATS_USER=bot_user"
 Environment="NATS_PASSWORD=bot_password"
 
-# Main process
-ExecStart=/opt/kryten-misc/.venv/bin/python -m echo_bot.main --config /opt/kryten-misc/config.json
+# Main process - uses default path /etc/kryten/kryten-misc/config.json
+# Or specify custom path with: --config /path/to/config.json
+ExecStart=/opt/kryten-misc/.venv/bin/python -m echo_bot.main
 
 # Restart policy
 Restart=on-failure

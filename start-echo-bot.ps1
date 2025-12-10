@@ -43,11 +43,13 @@ if (Test-Path $PidFile) {
     }
 }
 
-# Check if config file exists
-if (-not (Test-Path $ConfigPath)) {
-    Write-Error-Custom "Configuration file not found: $ConfigPath"
-    Write-Info "Copy config.example.json to config.json and configure it"
-    exit 1
+# Build config argument
+if (Test-Path $ConfigPath) {
+    $ConfigArg = @("--config", $ConfigPath)
+    Write-Info "Using config: $ConfigPath"
+} else {
+    $ConfigArg = @()
+    Write-Info "Using default config paths"
 }
 
 # Check Python version
@@ -111,7 +113,9 @@ try {
 
 # Start the bot
 Write-Info "Starting Echo Bot..."
-Write-Info "Config: $ConfigPath"
+if ($ConfigArg.Count -gt 0) {
+    Write-Info "Config: $ConfigPath"
+}
 Write-Info "Log file: $LogFile"
 
 # Clear PYTHONPATH to avoid loading development versions
@@ -121,8 +125,9 @@ Push-Location $ScriptDir
 
 if ($Background) {
     # Start in background
+    $ProcessArgs = @("-m", "echo_bot.main") + $ConfigArg
     $Process = Start-Process -FilePath "python" `
-        -ArgumentList "-m", "echo_bot.main", "--config", $ConfigPath `
+        -ArgumentList $ProcessArgs `
         -RedirectStandardOutput $LogFile `
         -RedirectStandardError $LogFile `
         -NoNewWindow `
@@ -144,7 +149,8 @@ if ($Background) {
 } else {
     # Run in foreground
     Write-Info "Running in foreground (Ctrl+C to stop)..."
-    python -m echo_bot.main --config $ConfigPath
+    $ProcessArgs = @("-m", "echo_bot.main") + $ConfigArg
+    & python @ProcessArgs
 }
 
 Pop-Location

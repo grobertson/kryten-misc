@@ -229,9 +229,12 @@ Write-Host ""
 
 try {
     # Build arguments
-    $args = @("echo_bot\main.py", "--config", $ConfigPath)
+    $scriptArgs = @("echo_bot\main.py")
+    if (Test-Path $ConfigPath) {
+        $scriptArgs += @("--config", $ConfigPath)
+    }
     
-    & $VenvPython @args
+    & $VenvPython @scriptArgs
     
     $exitCode = $LASTEXITCODE
     

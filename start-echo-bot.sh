@@ -42,11 +42,13 @@ if [ -f "$PID_FILE" ]; then
     fi
 fi
 
-# Check if config file exists
-if [ ! -f "$CONFIG_FILE" ]; then
-    log_error "Configuration file not found: $CONFIG_FILE"
-    log_info "Copy config.example.json to config.json and configure it"
-    exit 1
+# Build config argument
+if [ -f "$CONFIG_FILE" ]; then
+    CONFIG_ARG="--config $CONFIG_FILE"
+    log_info "Using config: $CONFIG_FILE"
+else
+    CONFIG_ARG=""
+    log_info "Using default config paths"
 fi
 
 # Check Python version
@@ -92,11 +94,13 @@ fi
 
 # Start the bot
 log_info "Starting Echo Bot..."
-log_info "Config: $CONFIG_FILE"
+if [ -n "$CONFIG_ARG" ]; then
+    log_info "Config: $CONFIG_FILE"
+fi
 log_info "Log file: $LOG_FILE"
 
 cd "$SCRIPT_DIR"
-nohup python3 -m echo_bot.main --config "$CONFIG_FILE" >> "$LOG_FILE" 2>&1 &
+nohup python3 -m echo_bot.main $CONFIG_ARG >> "$LOG_FILE" 2>&1 &
 BOT_PID=$!
 
 # Save PID

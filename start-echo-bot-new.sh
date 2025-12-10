@@ -180,7 +180,13 @@ fi
 # Step 5: Run the application
 echo ""
 echo -e "\033[32mStarting Echo Bot...\033[0m"
-echo -e "\033[90mConfig: $CONFIG_PATH\033[0m"
+if [[ -f "$CONFIG_PATH" ]]; then
+    echo -e "\033[90mConfig: $CONFIG_PATH\033[0m"
+    CONFIG_ARG="--config $CONFIG_PATH"
+else
+    echo -e "\033[90mUsing default config paths\033[0m"
+    CONFIG_ARG=""
+fi
 if [[ -n "$KRYTEN_LOG_LEVEL" ]]; then
     echo -e "\033[90mLog Level: $KRYTEN_LOG_LEVEL\033[0m"
 fi
@@ -188,4 +194,4 @@ echo -e "\033[90mResponds to '!echo <message>' in chat\033[0m"
 echo -e "\033[90mPress Ctrl+C to stop\033[0m"
 echo ""
 
-exec "$VENV_PYTHON" "$SCRIPT_DIR/echo_bot/main.py" --config "$CONFIG_PATH"
+exec "$VENV_PYTHON" "$SCRIPT_DIR/echo_bot/main.py" $CONFIG_ARG
