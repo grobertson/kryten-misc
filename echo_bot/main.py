@@ -131,17 +131,42 @@ async def main(config_path: str | None = None) -> None:
     Args:
         config_path: Path to configuration file (optional)
     """
-    # Load configuration
-    if config_path and Path(config_path).exists():
-        logger.info(f"Loading configuration from {config_path}")
-        config = KrytenConfig.from_json(config_path)
+    # Determine config file path
+    if config_path:
+        config_file = Path(config_path)
     else:
-        # Default configuration
-        logger.info("Using default configuration")
-        config = {
-            "nats": {"servers": ["nats://localhost:4222"]},
-            "channels": [{"domain": "cytu.be", "channel": "lounge"}],
-        }
+        # Try default locations in order
+        default_paths = [
+            Path("/etc/kryten/kryten-misc/config.json"),
+            Path("config.json")
+        ]
+        
+        config_file = None
+        for path in default_paths:
+            if path.exists() and path.is_file():
+                config_file = path
+                break
+        
+        if not config_file:
+            logger.error("No configuration file found.")
+            logger.error("  Searched:")
+            for path in default_paths:
+                logger.error(f"    - {path}")
+            logger.error("  Use --config to specify a custom path.")
+            sys.exit(1)
+    
+    # Validate config file exists
+    if not config_file.exists():
+        logger.error(f"Configuration file not found: {config_file}")
+        sys.exit(1)
+    
+    if not config_file.is_file():
+        logger.error(f"Configuration path is not a file: {config_file}")
+        sys.exit(1)
+    
+    # Load configuration
+    logger.info(f"Loading configuration from {config_file}")
+    config = KrytenConfig.from_json(str(config_file))
 
     # Create client and bot
     async with KrytenClient(config) as client:
@@ -189,8 +214,7 @@ def parse_args() -> argparse.Namespace:
         "--config",
         "-c",
         type=str,
-        help="Path to configuration file (JSON)",
-        default="config.json",
+        help="Path to configuration file (default: /etc/kryten/kryten-misc/config.json or ./config.json)",
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
